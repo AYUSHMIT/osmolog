@@ -93,10 +93,7 @@ for n in [2**x for x in range(3,MAX,1)]:
         if (heuristicSols != []):
             for sol in heuristicSols:
                 p = sol["Best"]
-                #goForAll(...,HeuP, HeuF, BestP, BestF, BestVC, BestC, WorstP, WorstF, WorstVC, WorstC, Time)"
                 if (p!='none'):
-                    # heuristic['cost'] = heuristic['cost'] + sol["C"]
-                    # heuristic['vc'] = heuristic['vc'] + sol["VC"]
                     heuristic['time'] = heuristic['time'] + sol["Time"]
                     
                     p1 = str(p)
