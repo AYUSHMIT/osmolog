@@ -1,37 +1,12 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
 :- consult('core').
-:-['infra','app'].
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% goAll returns the list of all full ranked placements
-% Sample queries:
-%   goForAll().
-%
-% goForAll(arApp, adaptive, full, 110, HeuP, HeuF, BestP, BestF, BestVC, BestC, WorstP, WorstF, WorstVC, WorstC, Time).
-goForAll(AppName, AppVersion, PreferredMelVersion, MaxCost, HeuP, HeuF, BestP, BestF, BestVC, BestC, WorstP, WorstF, WorstVC, WorstC, Time) :-
-        statistics(cputime, Start),
-    findall((Placement, PlacementCost), placement(AppName, AppVersion, MaxCost, Placement, PlacementCost), Placements),
-    evalPlacements(AppName, AppVersion, PreferredMelVersion, Placements, EvaluatedPlacements),
-    sort(1,@>=,EvaluatedPlacements, SPlacements),
-    SPlacements=[Best|_],
-        statistics(cputime, Stop),
-        Time is Stop - Start,
-    nth0(0,Best,BestF),nth0(1,Best,BestVC), nth0(2,Best,BestC), nth0(3,Best,BestP),
-    %writeln(Best),writeln(BestF),writeln(BestVC),writeln(BestC),writeln(BestP),
-    last(SPlacements, Worst),
-    nth0(0,Worst,WorstF),nth0(1,Worst,WorstVC), nth0(2,Worst,WorstC), nth0(3,Worst,WorstP),
-    findHeuristicF(HeuP, HeuF, SPlacements).
-    %writeln(Worst),writeln(WorstF),writeln(WorstVC),writeln(WorstC),writeln(WorstP).
+:- ['example'].
+%:-['infra','app'].
 
-findHeuristicF(HeuP, HeuF, SPlacements):-
-    member([PF,_,_, P], SPlacements),
-    sort(HeuP,HeuPSorted), sort(P,PSorted),
-    PSorted = HeuPSorted,
-    ( (ground(PF), HeuF is PF) ; HeuF = 200).
-
-myPrint([]).
-myPrint([X|Xs]):-write_ln(X),myPrint(Xs).
-
+% Finds the best solution, relying on goForBest and returns CPU time.
+% Example query: go((0,highest), arApp, adaptive, full, 100, V, C, Best, Time).
+%%
 go(SortType, AppName, AppVersion, PreferredMelVersion, MaxCost, VC, C, Best, Time) :-
     statistics(cputime, Start),
     goForBest(SortType, AppName, AppVersion, PreferredMelVersion, MaxCost, BestPlacement),
@@ -39,9 +14,9 @@ go(SortType, AppName, AppVersion, PreferredMelVersion, MaxCost, VC, C, Best, Tim
     nth0(1,BestPlacement,VC), nth0(2,BestPlacement,C), nth0(3,BestPlacement,Best).
 
 % goForBest returns the "best" full ranked placement according to the given SortType
-%   SortType è una coppia (S,highest/lowest) usata per indicare:
-%   - il valore del ranking rispetto a cui ordinare, ovvero formula (S=0), servizi (S=1), costo (S=2), e
-%   - come ordinare (Highest o lowest)
+%   SortType is a couple (S,highest/lowest) to indicate:
+%   - the ranking value with respect to which sort results, i.e. ranking (S=0), version compliance (S=1), cost (S=2), and
+%   - how to sort (Highest or lowest)
 % Sample queries:
 %   goForBest((0,highest), smartHome, dunno, full, 40, Best).
 %   goForBest(prolog, (2,lowest),  smartHome, dunno, full, 40, Best).
@@ -63,7 +38,6 @@ evalPlacements(AppName, AppVersion, PreferredMelVersion, [(Placement,Cost)], [[_
     application((AppName, AppVersion), Mels), length(Mels, NMels), 
     findall(S, member(on(S, PreferredMelVersion, _), Placement), Ls), length(Ls, NPreferredVersionMels),
     VersionCompliance is div(100*NPreferredVersionMels,NMels).
-
 evalPlacements(AppName, AppVersion, PreferredMelVersion, Placements, EvaluatedPlacements):-
     length(Placements, L), L>1, 
     application((AppName, AppVersion), Mels), length(Mels, NMels),
@@ -92,3 +66,33 @@ choose((S,highest), E, BestOfEs, E) :- nth0(S, E, V), nth0(S, BestOfEs, W), V > 
 choose((S,highest), E, BestOfEs, BestOfEs) :- nth0(S, E, V), nth0(S, BestOfEs, W), V =<  W.
 choose((S,lowest), E, BestOfEs, E) :- nth0(S, E, V), nth0(S, BestOfEs, W), V =< W.
 choose((S,lowest), E, BestOfEs, BestOfEs) :- nth0(S, E, V), nth0(S, BestOfEs, W), V > W.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Returns the best and worst placement (BestP, WorstP) out of all placements, with statistics on CPU time.
+% It also returns the best and worst ranking, version compliance and cost.
+% Given an input placement HeuP, it evaluates the same also for it.
+% Sample query:
+% goForAll(arApp, adaptive, full, 110, HeuP, HeuF, BestP, BestF, BestVC, BestC, WorstP, WorstF, WorstVC, WorstC, Time).
+goForAll(AppName, AppVersion, PreferredMelVersion, MaxCost, HeuP, HeuF, BestP, BestF, BestVC, BestC, WorstP, WorstF, WorstVC, WorstC, Time) :-
+        statistics(cputime, Start),
+    findall((Placement, PlacementCost), placement(AppName, AppVersion, MaxCost, Placement, PlacementCost), Placements),
+    evalPlacements(AppName, AppVersion, PreferredMelVersion, Placements, EvaluatedPlacements),
+    sort(1,@>=,EvaluatedPlacements, SPlacements),
+    SPlacements=[Best|_],
+        statistics(cputime, Stop),
+        Time is Stop - Start,
+    nth0(0,Best,BestF),nth0(1,Best,BestVC), nth0(2,Best,BestC), nth0(3,Best,BestP),
+    last(SPlacements, Worst),
+    nth0(0,Worst,WorstF),nth0(1,Worst,WorstVC), nth0(2,Worst,WorstC), nth0(3,Worst,WorstP),
+    findHeuristicF(HeuP, HeuF, SPlacements).
+
+findHeuristicF(HeuP, HeuF, SPlacements):-
+    member([PF,_,_, P], SPlacements),
+    sort(HeuP,HeuPSorted), sort(P,PSorted),
+    PSorted = HeuPSorted,
+    ( (ground(PF), HeuF is PF) ; HeuF = 200).
+
+myPrint([]).
+myPrint([X|Xs]):-write_ln(X),myPrint(Xs).
+
+
