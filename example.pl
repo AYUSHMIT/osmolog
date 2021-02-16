@@ -1,3 +1,6 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+% Example Application %
+%%%%%%%%%%%%%%%%%%%%%%%
 mel((usersData,full), [docker], 64, []).
 
 mel((videoStorage,full), [docker], 16, []).
@@ -16,6 +19,10 @@ mel2mel(movementProcessing, arDriver, 20).
 
 application((arApp, full), [(usersData,full), (videoStorage,full), (movementProcessing,full), (arDriver,full)]).
 application((arApp, adaptive), [(usersData,full), (videoStorage,_), (movementProcessing,_), (arDriver,_)]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example Infrastructure %
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 node(edge42, [(gcc,0),(caffe,4)], (6, 3), [(phone,1),(lightSensor,1)]).
 node(cloud42, [(docker, 5)], (100, 1), []).
