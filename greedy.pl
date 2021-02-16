@@ -2,13 +2,13 @@
 :-['core'].
 :-['example'].
 
+% Finds the best candidate placement via heuristic search, returns CPU time.
 % example query:
-%      
-% 
-go(Application, V, PrefVersion, CapCost, Placement, VersionCompliance, Cost, Infs) :-
+%   go(arApp, adaptive, full, 100, P, VC, C, Time). 
+go(Application, V, PrefVersion, CapCost, Placement, VersionCompliance, Cost, Time) :-
     statistics(cputime, Start),
     h_placement(Application, V, PrefVersion, CapCost,   Placement, VersionCompliance, Cost),
-    statistics(cputime, Stop), Infs is Stop - Start.
+    statistics(cputime, Stop), Time is Stop - Start.
 
 h_placement(Application, V, PrefVersion, CapCost,   Placement, VersionCompliance, Cost) :-
     application((Application, V), Mels),
@@ -33,7 +33,8 @@ compatible(M,V,((M,V),N,Cost) ) :-
 setInitalState(f(0, ((0,0,0),(0,0,0,0),[],[]))).
 extract(f(_, ((A,_,_),(_,Bcost,_,_),_,Placement)), Placement, A, Bcost). 
 
-
+% Expands the best state with a +1 look-ahead.
+% Considers states 
 h_melPlacement([],_, _, _, X, X) :- getPlacement(X,Placement), checkFlows(Placement).
 h_melPlacement(Mels, Compatibles, PrefVersion, CapCost, State, NewState) :-
     getAllocHW(State, AllocHW), 
@@ -41,9 +42,9 @@ h_melPlacement(Mels, Compatibles, PrefVersion, CapCost, State, NewState) :-
         ( member(MV,Mels), member((MV, N, NodeCost), Compatibles), placementOK(MV, N, AllocHW, NewAllocHW) ), List),
     max_and_min(List,MaxCost,MinCost), 
     lookAhead(List,PrefVersion,MaxCost,MinCost,State,NewList1), 
-    sort(NewList1,Tmp), reverse(Tmp, NewList2),
-    decreasingSort(Mels,NewList1,Options),
-    member((_,BestMV),Options), member((NextState,BestMV), NewList2),
+    sort(NewList1,Tmp), reverse(Tmp, NewList2), % NewList2 is sorted by decreasing ranking estimates
+    increasingOptions(Mels,NewList1,Options), % from the (M,V) with less options to the one with more
+    member((_,BestMV),Options), member((NextState,BestMV), NewList2), 
     NextState=f(_,(_,(_,Bcost,_,_),_,_)), Bcost =< CapCost, 
     getPlacement(NextState,Placement), checkFlows(Placement),
     updateMels(BestMV,Mels,NewMels), 
@@ -61,7 +62,7 @@ hwReqsOK(HW_Reqs, (HW_Cap, _), N, [(N,A)|As], [(N,NewA)|As]) :-
 hwReqsOK(HW_Reqs, HW_Caps, N, [(N1,A1)|As], [(N1,A1)|NewAs]) :-
     dif(N,N1), hwReqsOK(HW_Reqs, HW_Caps, N, As, NewAs).
 
-decreasingSort(Mels,List,SortedL):- 
+increasingOptions(Mels,List,SortedL):- 
     findOptionsPerMel(Mels, List, Options),
     sort(1, @=<, Options, SortedL).
 
