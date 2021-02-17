@@ -2,6 +2,7 @@
 :-['core'].
 :-['example'].
 
+
 % Finds the best candidate placement via heuristic search, returns CPU time.
 % example query:
 %   go(arApp, adaptive, full, 100, P, VC, C, Time). 
@@ -10,7 +11,7 @@ go(Application, V, PrefVersion, CapCost, Placement, VersionCompliance, Cost, Tim
     h_placement(Application, V, PrefVersion, CapCost,   Placement, VersionCompliance, Cost),
     statistics(cputime, Stop), Time is Stop - Start.
 
-h_placement(Application, V, PrefVersion, CapCost,   Placement, VersionCompliance, Cost) :-
+h_placement(Application, V, PrefVersion, CapCost,  Placement, VersionCompliance, Cost) :-
     application((Application, V), Mels),
     setInitalState(InitialState),
     preprocessing(Mels, Compatibles),            

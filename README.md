@@ -2,6 +2,18 @@
 
 A declarative solution for placing and configuring applications in Osmotic Computing settings.
 
+### Background and Requirements
+
+osmolog is written in Prolog. Prolog programs are finite sets of *clauses* of the form:
+
+```prolog
+a :- b1, ... , bn.
+```
+
+stating that `a` holds when `b1` and ... and `bn` holds, where `n =< 0` and `a`, `b1` ..., `bn` are atomic literals. Clauses with empty condition are also called *facts*. Prolog variables begin with upper-case letters, lists are denoted by square brackets, and negation by `\+`.
+
+To run osmolog, please install [SWI-Prolog](https://www.swi-prolog.org/Download.html).
+
 ## Quickstart Example
 
 Consider the Osmotic application below from Augmented Reality.
@@ -17,18 +29,6 @@ Given a Cloud-IoT infrastructure, osmolog *jointly* determines a solution to the
 and
 
 > Which MEL version to deploy?
-
-### Background
-
-osmolog is written in Prolog. Prolog programs are finite sets of *clauses* of the form:
-
-```prolog
-a :- b1, ... , bn.
-```
-
-stating that `a` holds when `b1` and ... and `bn` holds, where `n =< 0` and `a`, `b1` ..., `bn` are atomic literals. Clauses with empty condition are also called *facts*. Prolog variables begin with upper-case letters, lists are denoted by square brackets, and negation by `\+`.
-
-To run osmolog, please install [SWI-Prolog](https://www.swi-prolog.org/Download.html).
 
 ### Model
 
@@ -74,6 +74,52 @@ link(edge42, cloud42, 20).
 Note that `node/4` facts denote the software, hardware and IoT capabilities of each node, associated with their estimated monthly usage cost.
 Finally, `link/3` facts denote the end-to-end latency in milliseconds between two nodes.
 
-### Exhaustive Search
+### Optimisation
 
-### Heuristic Search
+osmolog determines eligible placements (i.e. mapping from MELs to Cloud-IoT nodes) and configuration (i.e. mapping to MELs from one of their versions) of a version of an Osmotic application. Placements are ranked so to:
+
+- minimise estimated operational costs, and
+- maximise compliance to a preferred MEL version among `light`, `medium` and `full`.
+
+A (best) candidate placement can be determined by means of an exhaustive (`exhaustive.pl`) or a heuristic search strategy (`greedy.pl`).
+
+#### Exhaustive Search
+
+To use the exhaustive search (`exhaustive.pl`) to determine a placement for the example application onto the example infrastructure, simply query the predicate:
+
+```prolog
+% goForBest(SortType, AppId, AppVersion, PreferredMELVersion, MaxCost, BestPlacement).
+?- goForBest((0,highest), arApp, adaptive, full, 110, Best).
+```
+
+This query returns the best possible placement `BestPlacement` of the `arApp`, maximising the number of `full` MELs and minimising the operational cost, without exceeding 110 euro per month. 
+
+The output `BestPlacement` is
+
+```prolog
+BestPlacement = [175, 75, 107, [on(usersData, full, cloud42), on(videoStorage, full, cloud42), on(movementProcessing, full, cloud42), on(arDriver, light, edge42)]] 
+```
+
+ranked 175/200, and featuring 75% version compliance and an estimated monthly cost of 107 euro.
+
+
+#### Heuristic Search
+
+To use the exhaustive search (`greedy.pl`) to determine a placement for the example application onto the example infrastructure, simply query the predicate:
+
+```prolog
+% h_placement(Application, V, PrefVersion, CapCost, HPlacement, VersionCompliance, Cost).
+?- h_placement(arApp, adaptive, full, 110, P, VC, C).
+```
+
+This query returns a (sub-)optimal `HPlacement` of the `arApp`, trying to maximise the number of `full` MELs and trying to minimise the operational cost, without exceeding 110 euro per month. 
+
+The output `HPlacement` is the same as before
+
+```prolog
+P = [on(arDriver, light, edge42), on(videoStorage, full, cloud42), on(movementProcessing, full, cloud42), on(usersData, full, cloud42)],
+VC = 75,
+C = 107.
+```
+
+ranked 175/200, and featuring 75% version compliance and an estimated monthly cost of 107 euro.
