@@ -18,6 +18,18 @@ and
 
 > Which MEL version to deploy?
 
+### Background
+
+osmolog is written in Prolog. Prolog programs are finite sets of *clauses* of the form:
+
+```prolog
+a :- b1, ... , bn.
+```
+
+stating that `a` holds when `b1` and ... and `bn` holds, where `n =< 0` and `a`, `b1` ..., `bn` are atomic literals. Clauses with empty condition are also called *facts*. Prolog variables begin with upper-case letters, lists are denoted by square brackets, and negation by `\+`.
+
+To run osmolog, please install [SWI-Prolog](https://www.swi-prolog.org/Download.html).
+
 ### Model
 
 We first describe the osmolog model, following the input data contained in the file `example.pl`.
