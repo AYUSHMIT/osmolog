@@ -74,9 +74,9 @@ link(edge42, cloud42, 20).
 Note that `node/4` facts denote the software, hardware and IoT capabilities of each node, associated with their estimated monthly usage cost.
 Finally, `link/3` facts denote the end-to-end latency in milliseconds between two nodes.
 
-### Optimisation
+### Osmolog at Work
 
-osmolog determines eligible placements (i.e. mapping from MELs to Cloud-IoT nodes) and configuration (i.e. mapping to MELs from one of their versions) of a version of an Osmotic application. Placements are ranked so to:
+Osmolog determines eligible placements (i.e. mapping from MELs to Cloud-IoT nodes) and configuration (i.e. mapping to MELs from one of their versions) of a version of an Osmotic application. Placements are ranked so to:
 
 - minimise estimated operational costs, and
 - maximise compliance to a preferred MEL version among `light`, `medium` and `full`.
@@ -122,4 +122,4 @@ VC = 75,
 C = 107.
 ```
 
-ranked 175/200, and featuring 75% version compliance and an estimated monthly cost of 107 euro.
+featuring 75% version compliance and an estimated monthly cost of 107 euro. Note that, from our experiments, the heuristic search determines solutions that are on average 9% far from the optimal, with a 40x speed-up on execution times.
