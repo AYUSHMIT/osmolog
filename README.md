@@ -20,6 +20,8 @@ and
 
 ### Model
 
+We first describe the osmolog model, following the input data contained in the file `example.pl`.
+
 #### Application
 
 A fully adaptive version of the application above can be specified as in:
@@ -48,4 +50,18 @@ Note that `mel/4` facts denote all MEL requirements for different versions `(Mel
 
 #### Infrastructure
 
+A Cloud-IoT infrastructure of two nodes is declared as in
 
+```prolog
+node(edge42, [(gcc,0),(caffe,4)], (6, 3), [(phone,1),(lightSensor,1)]).
+node(cloud42, [(docker, 5)], (100, 1), []).
+
+link(edge42, cloud42, 20).
+```
+
+Note that `node/4` facts denote the software, hardware and IoT capabilities of each node, associated with their estimated monthly usage cost.
+Finally, `link/3` facts denote the end-to-end latency in milliseconds between two nodes.
+
+### Exhaustive Search
+
+### Heuristic Search
