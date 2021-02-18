@@ -34,7 +34,7 @@ and
 
 We first describe the osmolog model, following the input data contained in the file `example.pl`.
 
-#### Application
+###### Application
 
 A fully adaptive version of the application above can be specified as in:
 
@@ -60,7 +60,7 @@ application((arApp, adaptive), [(usersData,full), (videoStorage,_), (movementPro
 
 Note that `mel/4` facts denote all MEL requirements for different versions `(MelId, Version)` in terms of software requirements, hardware resources and IoT requirements. Besides, `mel2mel/3` denote latency requirements in milliseconds between application MELs. Finally, `application/2` facts denote instead the services composing a certain version `(AppId, Version)` of the considered application.
 
-#### Infrastructure
+###### Infrastructure
 
 A Cloud-IoT infrastructure of two nodes is declared as in
 
@@ -83,7 +83,7 @@ Osmolog determines eligible placements (i.e. mapping from MELs to Cloud-IoT node
 
 A (best) candidate placement can be determined by means of an exhaustive (`exhaustive.pl`) or a heuristic search strategy (`greedy.pl`).
 
-#### Exhaustive Search
+###### Exhaustive Search
 
 To use the exhaustive search (`exhaustive.pl`) to determine a placement for the example application onto the example infrastructure, simply query the predicate:
 
@@ -103,13 +103,13 @@ BestPlacement = [175, 75, 107, [on(usersData, full, cloud42), on(videoStorage, f
 ranked 175/200, and featuring 75% version compliance and an estimated monthly cost of 107 euro.
 
 
-#### Heuristic Search
+###### Heuristic Search
 
 To use the exhaustive search (`greedy.pl`) to determine a placement for the example application onto the example infrastructure, simply query the predicate:
 
 ```prolog
 % h_placement(Application, V, PrefVersion, CapCost, HPlacement, VersionCompliance, Cost).
-?- h_placement(arApp, adaptive, full, 110, P, VC, C).
+?- h_placement(arApp, adaptive, full, 110, HPlacement, VC, C).
 ```
 
 This query returns a (sub-)optimal `HPlacement` of the `arApp`, trying to maximise the number of `full` MELs and trying to minimise the operational cost, without exceeding 110 euro per month. 
@@ -117,9 +117,9 @@ This query returns a (sub-)optimal `HPlacement` of the `arApp`, trying to maximi
 The output `HPlacement` is the same as before
 
 ```prolog
-P = [on(arDriver, light, edge42), on(videoStorage, full, cloud42), on(movementProcessing, full, cloud42), on(usersData, full, cloud42)],
+HPlacement = [on(arDriver, light, edge42), on(videoStorage, full, cloud42), on(movementProcessing, full, cloud42), on(usersData, full, cloud42)],
 VC = 75,
 C = 107.
 ```
 
-featuring 75% version compliance and an estimated monthly cost of 107 euro. Note that, from our experiments, the heuristic search determines solutions that are on average 9% far from the optimal, with a 40x speed-up on execution times.
+featuring 75% version compliance and an estimated monthly cost of 107 euro. Note that, from our experiments, the heuristic search determines solutions that are on average 9% far from the optimal, achieving a 40x speed-up on execution times.
