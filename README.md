@@ -2,6 +2,14 @@
 
 A declarative solution for placing and configuring applications in Osmotic Computing settings.
 
+Osmolog methodology is described and assessed in:
+
+> [Stefano Forti](http://pages.di.unipi.it/forti), [Antonio Brogi](http://pages.di.unipi.it/brogi)<br>
+> [**Declarative Osmotic Application Placement**](), <br>	
+> [Next Generation Information Systems: Emerging Challenges in Fog and Cloud Computing (NeGIS](https://www.negis.polimi.it) @ [CAiSE](https://caise21.org), 2021.
+
+If you wish to reuse source code in this repo, please consider citing the above mentioned article.
+
 ### Background and Requirements
 
 osmolog is written in Prolog. Prolog programs are finite sets of *clauses* of the form:
