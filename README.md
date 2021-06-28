@@ -5,7 +5,7 @@ A declarative solution for placing and configuring applications in Osmotic Compu
 Osmolog methodology is described and assessed in:
 
 > [Stefano Forti](http://pages.di.unipi.it/forti), [Antonio Brogi](http://pages.di.unipi.it/brogi)<br>
-> **Declarative Osmotic Application Placement**, <br>	
+> [**Declarative Osmotic Application Placement**](https://link.springer.com/chapter/10.1007/978-3-030-79022-6_15), <br>	
 > [Next Generation Information Systems (NeGIS)](https://www.negis.polimi.it) @ [CAiSE](https://caise21.org), 2021.
 
 If you wish to reuse source code in this repo, please consider citing the above mentioned article.
