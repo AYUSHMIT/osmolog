@@ -19,8 +19,6 @@ go(SortType, AppName, AppVersion, PreferredMelVersion, MaxCost, VC, C, Best, Tim
 %   - how to sort (Highest or lowest)
 % Sample queries:
 %   goForBest((0,highest), smartHome, dunno, full, 40, Best).
-%   goForBest(prolog, (2,lowest),  smartHome, dunno, full, 40, Best).
-%   goForBest(clp,    (1,lowest),  smartHome, dunno, full, 40, Best).
 goForBest(SortType, AppName, AppVersion, PreferredMelVersion, MaxCost, BestPlacement) :-
     findall((Placement, PlacementCost), placement(AppName, AppVersion, MaxCost, Placement, PlacementCost), Placements),
     evalPlacements(AppName, AppVersion, PreferredMelVersion, Placements, EvaluatedPlacements),
